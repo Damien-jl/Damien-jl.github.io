@@ -74,20 +74,22 @@ class StoryList {
    */
 
   async addStory(user, {title,author,url}) {
-    // UNIMPLEMENTED: complete this function!
     // we're using a token for authentification 
     const token = user.loginToken;
     const res = await axios({
       method: 'POST',
       url: `${BASE_URL}/stories`,
-      data: {token, story: {title,author,url}}
+      data: {token, story: {title,author,url}},
     });
     // we're creating a new story and adding it to all stories as well as the user's own stories
     const newStory = new Story(res.data.story);
-    Story.stories.unshift(newStory);
+    this.stories.unshift(newStory);
     user.ownStories.unshift(newStory);
+
+    return newStory;
   }
 }
+
 
 
 /******************************************************************************
