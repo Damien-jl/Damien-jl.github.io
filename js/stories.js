@@ -50,3 +50,19 @@ function putStoriesOnPage() {
 
   $allStoriesList.show();
 }
+
+async function collectData (e) {
+  e.preventDefault();
+  const authName = document.querySelector('#new-author').val();
+  const title = document.querySelector('#new-title').val();
+  const url = document.querySelector('#new-url').val();
+  const user = currentUser.username;
+  const data = {title,url,authName,user};
+
+  const newStory = await storyList.addStory(currentUser,data);
+  const $newStory = generateStoryMarkup(newStory);
+  $allStoriesList.prepend($newStory);
+}
+
+const subForm = document.querySelector('#sub-form');
+subForm.on('submit', collectData)
