@@ -83,7 +83,7 @@ class StoryList {
     });
     // we're creating a new story and adding it to all stories as well as the user's own stories
     const newStory = new Story(res.data.story);
-    this.stories.unshift(newStory);
+    Story.stories.unshift(newStory);
     user.ownStories.unshift(newStory);
 
     return newStory;
@@ -207,3 +207,33 @@ class User {
     }
   }
 }
+
+async function addOrRemFavorite(outcome, story) {
+  if (outcome === 'add') {
+    return 'POST';
+  } 
+  if (outcome !== 'add') {
+    return 'DELETE';
+  }
+    const token = User.loginToken;
+      await axios({
+        url: `${BASE_URL}/users/${User.username}/favorites/${story.storyId}`,
+        method: outcome,
+        data: {token}
+    })
+  } 
+
+  async function addFav (story) {
+    this.favorites.push(story);
+    await this.addOrRemFavorite('add', story);
+  }
+
+  async function remFav (story) {
+    this.favorites.filter(stor => stor.storyId !== story.storyId);
+    await this.addOrRemFavorite('remove', story);
+  }
+
+
+
+
+
