@@ -206,32 +206,37 @@ class User {
       return null;
     }
   }
+  async addOrRemFavorite(outcome, story) {
+    if (outcome === 'add') {
+      return 'POST';
+    } 
+    if (outcome !== 'add') {
+      return 'DELETE';
+    }
+      const token = this.loginToken;
+        await axios({
+          url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+          method: outcome,
+          data: {token}
+      })
+    } 
+  
+    async addFav (story) {
+      this.favorites.push(story);
+      await this.addOrRemFavorite('add', story);
+    }
+  
+    async remFav (story) {
+      this.favorites.filter(stor => stor.storyId !== story.storyId);
+      await this.addOrRemFavorite('remove', story);
+    }
+
+    favorite(fav) {
+     return this.favorites.find(stor => stor.storyId === fav.storyId) !== undefined;
+    }
 }
 
-async function addOrRemFavorite(outcome, story) {
-  if (outcome === 'add') {
-    return 'POST';
-  } 
-  if (outcome !== 'add') {
-    return 'DELETE';
-  }
-    const token = User.loginToken;
-      await axios({
-        url: `${BASE_URL}/users/${User.username}/favorites/${story.storyId}`,
-        method: outcome,
-        data: {token}
-    })
-  } 
 
-  async function addFav (story) {
-    this.favorites.push(story);
-    await this.addOrRemFavorite('add', story);
-  }
-
-  async function remFav (story) {
-    this.favorites.filter(stor => stor.storyId !== story.storyId);
-    await this.addOrRemFavorite('remove', story);
-  }
 
 
 

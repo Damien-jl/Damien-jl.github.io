@@ -106,11 +106,21 @@ function saveUserCredentialsInLocalStorage() {
  * - update nav bar options for logged-in user
  * - generate the user profile part of the page
  */
+  const $favoritedStories = $('favoritedStories');
+function generateFavoritedStories() {
+  $favoritedStories.empty();
+  if (currentUser) {
+    for (let story of currentUser.favorites) {
+      const $story = generateStoryMarkup(story);
+      $favoritedStories.append($story);
+    }
+  }
+}
 
 function updateUIOnUserLogin() {
   console.debug("updateUIOnUserLogin");
 
   $allStoriesList.show();
-
+  generateFavoritedStories();
   updateNavOnLogin();
 }

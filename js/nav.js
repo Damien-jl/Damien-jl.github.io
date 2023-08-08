@@ -42,4 +42,4 @@ function submitButton() {
   $allStoriesList.show();
 }
 
-$sub-btn.on('click', submitButton)
+$(subBtn).on('click', submitButton)

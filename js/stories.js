@@ -19,12 +19,14 @@ async function getAndShowStoriesOnStart() {
  * Returns the markup for the story.
  */
 
-function generateStoryMarkup(story) {
+function generateStoryMarkup(story, showDelIcon = false) {
   // console.debug("generateStoryMarkup", story);
-
   const hostName = story.getHostName();
+  const star = Boolean(currentUser);
   return $(`
       <li id="${story.storyId}">
+        ${showDelIcon ? deleteIcon(): ''}
+        ${star ? starIcon(story, currentUser) : ''}
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
@@ -34,8 +36,32 @@ function generateStoryMarkup(story) {
       </li>
     `);
 }
+async function handleFavFunc (story, user, favorited) {
+  if (favorited) {
+    await user.remFav(story);
+  } else {
+    await user.addFav(story);
+  }
+  generateFavoritedStories();
+}
 
 /** Gets list of stories from server, generates their HTML, and puts on page. */
+function starIcon (story, user) {
+  const favorited = user.favorite(story);
+  const iconClass = favorited ? 'fas' : 'far';
+  const $starIcon = $(` <span class = 'star'>
+   <i class = '${iconClass} fa-star'>
+  </i> </span>`);
+
+  $starIcon.on('click', () => {
+    handleFavFunc(story,user, favorited);
+  })
+  return $starIcon;
+}
+
+function deleteIcon () {
+  return `<span class = 'delete'> <i class="fa-regular fa-trash-can"></i> </span>`
+}
 
 function putStoriesOnPage() {
   console.debug("putStoriesOnPage");
@@ -53,9 +79,9 @@ function putStoriesOnPage() {
 
 async function collectData (e) {
   e.preventDefault();
-  const authName = document.querySelector('#new-author').val();
   const title = document.querySelector('#new-title').val();
   const url = document.querySelector('#new-url').val();
+  const authName = document.querySelector('#new-author').val();
   const user = currentUser.username;
   const data = {title,url,authName,user};
 
@@ -64,5 +90,6 @@ async function collectData (e) {
   $allStoriesList.prepend($newStory);
 }
 
-const subForm = document.querySelector('#sub-form');
-subForm.on('submit', collectData)
+
+$(subForm).on('submit', collectData)
+
