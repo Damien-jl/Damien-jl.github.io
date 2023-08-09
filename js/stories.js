@@ -31,8 +31,12 @@ function generateStoryMarkup(story, showDelIcon = false) {
           ${story.title}
         </a>
         <small class="story-hostname">(${hostName})</small>
+        <div>
         <small class="story-author">by ${story.author}</small>
+        </div>
+        <div>
         <small class="story-user">posted by ${story.username}</small>
+        </div>
       </li>
     `);
 }

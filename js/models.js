@@ -90,6 +90,15 @@ class StoryList {
 
     return newStory;
   }
+
+  async delStory(storyId, token) {
+    const delRes = await axios({
+      method: 'DELETE',
+      url: `${BASE_URL}/stories/${storyId}`,
+      auth: `${token}`
+    })
+    return delRes.data
+  }
 }
 
 
