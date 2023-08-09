@@ -20,7 +20,7 @@ async function getAndShowStoriesOnStart() {
  */
 
 function generateStoryMarkup(story, showDelIcon = false) {
-  // console.debug("generateStoryMarkup", story);
+ //console.debug("generateStoryMarkup", story);
   const hostName = story.getHostName();
   const star = Boolean(currentUser);
   return $(`
@@ -38,25 +38,18 @@ function generateStoryMarkup(story, showDelIcon = false) {
 }
 async function handleFavFunc (story, user, favorited) {
   if (favorited) {
-    await user.remFav(story);
+    await user.remFavorite(story);
   } else {
-    await user.addFav(story);
+    await user.addFavorite(story);
   }
   generateFavoritedStories();
 }
 
 /** Gets list of stories from server, generates their HTML, and puts on page. */
-function starIcon (story, user) {
-  const favorited = user.favorite(story);
-  const iconClass = favorited ? 'fas' : 'far';
-  const $starIcon = $(` <span class = 'star'>
-   <i class = '${iconClass} fa-star'>
-  </i> </span>`);
-
-  $starIcon.on('click', () => {
-    handleFavFunc(story,user, favorited);
-  })
-  return $starIcon;
+function starIcon (post, user) {
+  const favorited = user.favorite(post);
+  const icon = favorited ? 'fas' : 'far';
+  return `<span class = 'star'><i class = '${icon} fa-star'></i></span>`;
 }
 
 function deleteIcon () {
@@ -76,6 +69,13 @@ function putStoriesOnPage() {
 
   $allStoriesList.show();
 }
+
+$('#all-stories-list').on('click', '.star', (e) => {
+  const $icon = $(e.target).closest('.star');
+  const iD = $icon.closest('li').attr('id');
+  const story = storyList.stories.find(s => s.iD === iD);
+  handleFavFunc(story, currentUser, currentUser.favorite(story));
+})
 
 async function collectData (e) {
   e.preventDefault();

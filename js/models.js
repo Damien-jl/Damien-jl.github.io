@@ -24,8 +24,10 @@ class Story {
   /** Parses hostname out of URL and returns it. */
 
   getHostName() {
-    // UNIMPLEMENTED: complete this function!
-    return "hostname.com";
+    const newUrl = new URL(this.url);
+    const host = newUrl.host;
+    return host;
+   // return new URL(this.url).host
   }
 }
 
@@ -206,12 +208,12 @@ class User {
       return null;
     }
   }
+
   async addOrRemFavorite(outcome, story) {
     if (outcome === 'add') {
       return 'POST';
-    } 
-    if (outcome !== 'add') {
-      return 'DELETE';
+    } else if (outcome !== 'add') {
+      return 'DELETE'
     }
       const token = this.loginToken;
         await axios({
@@ -220,19 +222,19 @@ class User {
           data: {token}
       })
     } 
-  
-    async addFav (story) {
+
+    async addFavorite (story) {
       this.favorites.push(story);
       await this.addOrRemFavorite('add', story);
     }
   
-    async remFav (story) {
+    async remFavorite (story) {
       this.favorites.filter(stor => stor.storyId !== story.storyId);
-      await this.addOrRemFavorite('remove', story);
+      await this.addOrRemFavorite('delete', story);
     }
 
     favorite(fav) {
-     return this.favorites.find(stor => stor.storyId === fav.storyId) !== undefined;
+     return this.favorites.some(stor => (stor.storyId === fav.storyId));
     }
 }
 
