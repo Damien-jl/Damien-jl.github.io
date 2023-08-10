@@ -21,6 +21,7 @@ async function getAndShowStoriesOnStart() {
 
 function generateStoryMarkup(story, showDelIcon = false) {
  //console.debug("generateStoryMarkup", story);
+ console.log(story);
   const hostName = story.getHostName();
   const star = Boolean(currentUser);
   return $(`

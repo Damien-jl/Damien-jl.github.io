@@ -34,9 +34,11 @@
 .story-author {
   margin-left: 2em;
   color: green;
+  padding-top: 10px;
 }
 
 .story-user {
   display: block;
   color: orange;
+  padding-top: 10px;
 }
