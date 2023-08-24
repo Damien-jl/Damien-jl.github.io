@@ -110,7 +110,9 @@ function saveUserCredentialsInLocalStorage() {
 function generateFavoritedStories() {
   $favoritedStories.empty();
   if (currentUser) {
+    console.log(currentUser);
     for (let story of currentUser.favorites) {
+      console.log(story)
       const $story = generateStoryMarkup(story);
       $favoritedStories.append($story);
     }

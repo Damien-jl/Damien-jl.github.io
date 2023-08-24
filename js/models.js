@@ -7,7 +7,6 @@ const BASE_URL = "https://hack-or-snooze-v3.herokuapp.com";
  */
 
 class Story {
-
   /** Make instance of Story from data object about story:
    *   - {title, author, url, username, storyId, createdAt}
    */
@@ -27,10 +26,9 @@ class Story {
     const newUrl = new URL(this.url);
     const host = newUrl.host;
     return host;
-   // return new URL(this.url).host
+    // return new URL(this.url).host
   }
 }
-
 
 /******************************************************************************
  * List of Story instances: used by UI to show story lists in DOM.
@@ -62,7 +60,7 @@ class StoryList {
     });
 
     // turn plain old story objects from API into instances of Story class
-    const stories = response.data.stories.map(story => new Story(story));
+    const stories = response.data.stories.map((story) => new Story(story));
 
     // build an instance of our own class using the new array of stories
     return new StoryList(stories);
@@ -75,13 +73,13 @@ class StoryList {
    * Returns the new Story instance
    */
 
-  async addStory(user, {title,author,url}) {
-    // we're using a token for authentification 
+  async addStory(user, { title, author, url }) {
+    // we're using a token for authentification
     const token = user.loginToken;
     const res = await axios({
-      method: 'POST',
+      method: "POST",
       url: `${BASE_URL}/stories`,
-      data: {token, story: {title,author,url}},
+      data: { token, story: { title, author, url } },
     });
     // we're creating a new story and adding it to all stories as well as the user's own stories
     const newStory = new Story(res.data.story);
@@ -93,15 +91,13 @@ class StoryList {
 
   async delStory(storyId, token) {
     const delRes = await axios({
-      method: 'DELETE',
+      method: "DELETE",
       url: `${BASE_URL}/stories/${storyId}`,
-      auth: `${token}`
-    })
-    return delRes.data
+      auth: `${token}`,
+    });
+    return delRes.data;
   }
 }
-
-
 
 /******************************************************************************
  * User: a user in the system (only used to represent the current user)
@@ -113,21 +109,17 @@ class User {
    *   - token
    */
 
-  constructor({
-                username,
-                name,
-                createdAt,
-                favorites = [],
-                ownStories = []
-              },
-              token) {
+  constructor(
+    { username, name, createdAt, favorites = [], ownStories = [] },
+    token
+  ) {
     this.username = username;
     this.name = name;
     this.createdAt = createdAt;
 
     // instantiate Story instances for the user's favorites and ownStories
-    this.favorites = favorites.map(s => new Story(s));
-    this.ownStories = ownStories.map(s => new Story(s));
+    this.favorites = favorites.map((s) => new Story(s));
+    this.ownStories = ownStories.map((s) => new Story(s));
 
     // store the login token on the user so it's easy to find for API calls.
     this.loginToken = token;
@@ -147,7 +139,7 @@ class User {
       data: { user: { username, password, name } },
     });
 
-    let { user } = response.data
+    let { user } = response.data;
 
     return new User(
       {
@@ -155,7 +147,7 @@ class User {
         name: user.name,
         createdAt: user.createdAt,
         favorites: user.favorites,
-        ownStories: user.stories
+        ownStories: user.stories,
       },
       response.data.token
     );
@@ -182,7 +174,7 @@ class User {
         name: user.name,
         createdAt: user.createdAt,
         favorites: user.favorites,
-        ownStories: user.stories
+        ownStories: user.stories,
       },
       response.data.token
     );
@@ -208,7 +200,7 @@ class User {
           name: user.name,
           createdAt: user.createdAt,
           favorites: user.favorites,
-          ownStories: user.stories
+          ownStories: user.stories,
         },
         token
       );
@@ -219,37 +211,29 @@ class User {
   }
 
   async addOrRemFavorite(outcome, story) {
-    if (outcome === 'add') {
-      return 'POST';
-    } else if (outcome !== 'add') {
-      return 'DELETE'
+    let method = "DELETE";
+    if (outcome === "add") {
+       method = "POST";
     }
-      const token = this.loginToken;
-        await axios({
-          url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
-          method: outcome,
-          data: {token}
-      })
-    } 
+    const token = this.loginToken;
+    await axios({
+      url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+      method: method,
+      data: { token },
+    });
+  }
 
-    async addFavorite (story) {
+  async addFavorite(story) {
       this.favorites.push(story);
-      await this.addOrRemFavorite('add', story);
-    }
-  
-    async remFavorite (story) {
-      this.favorites.filter(stor => stor.storyId !== story.storyId);
-      await this.addOrRemFavorite('delete', story);
-    }
+      await this.addOrRemFavorite("add", story);
+  }
 
-    favorite(fav) {
-     return this.favorites.some(stor => (stor.storyId === fav.storyId));
-    }
+  async remFavorite(story) {
+    this.favorites.filter((stor) => stor.storyId !== story.storyId);
+    await this.addOrRemFavorite("delete", story);
+  }
+
+  favorite(fav) {
+    return this.favorites.some((stor) => stor.storyId === fav.storyId);
+  }
 }
-
-
-
-
-
-
-
